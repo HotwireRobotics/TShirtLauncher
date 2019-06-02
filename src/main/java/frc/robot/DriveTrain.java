@@ -8,9 +8,9 @@ public class DriveTrain {
 	float lerpSpeed = 0.8f;
 
 	public DriveTrain(int pwm1, int pwm2, int pwm3, int pwm4) {
-		joshmotorcontrollorLeftBottomOne = new JoshMotorControllor(pwm1, lerpSpeed, false);
-		joshmotorcontrollorLeftBottomTwo = new JoshMotorControllor(pwm2, lerpSpeed, false);
-		joshmotorcontrollorRightBottomOne = new JoshMotorControllor(pwm3, lerpSpeed, false);
+		joshmotorcontrollorLeftBottomOne = new JoshMotorControllor(pwm1, lerpSpeed, true);
+		joshmotorcontrollorLeftBottomTwo = new JoshMotorControllor(pwm2, lerpSpeed, true);
+		joshmotorcontrollorRightBottomOne = new JoshMotorControllor(pwm3, lerpSpeed, true);
 		joshmotorcontrollorRightBottomTwo = new JoshMotorControllor(pwm4, lerpSpeed, true);
 
 	}

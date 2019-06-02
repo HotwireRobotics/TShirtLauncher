@@ -19,12 +19,14 @@ import java.rmi.server.Operation;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -33,6 +35,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.hal.PDPJNI;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Spark;
 
 public class Robot extends TimedRobot {
 
@@ -42,13 +45,36 @@ public class Robot extends TimedRobot {
 	// Drivetrain
 	public DriveTrain driveTrain = new DriveTrain(0, 1, 2, 3);
 
+	// Compressors
+
+	public Spark pistonCompressor = new Spark(7);
+	public Spark launcherCompressor = new Spark(8);
+	public Spark launcherCompressorTwo = new Spark(9);
+
+	// Tank, no not the tank that runs you over.
+	public Spark tank = new Spark(6);
+	public double tankMoveSpeed = 0.2;
+	public double tankHoldSpeed = 0.0;
+
+	// Solenoids
+	public DoubleSolenoid launcher = new DoubleSolenoid(2, 3);
+
 	// Joysticks
-	public Joystick driver;
-	public Joystick operator;
-	public Joystick debug;
+	public Joystick driver = new Joystick(0);
+
+	// Pressure Sensor
+	public AnalogInput launcherPressure = new AnalogInput(2);
+	public AnalogInput pistonPressure = new AnalogInput(1);
+
+	public double pistonPressureTarget = 50;
+	public double launcherPressureTarget = 75;
+
+	private boolean pistonCharged = false;
+	private boolean launcherCharged = false;
+
+	public boolean autofill = true;
 
 	public void robotInit() {
-
 	}
 
 	public void disabledInit() {
@@ -61,15 +87,74 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopInit() {
-		// Controllers
-		debug = new Joystick(3);
 		driver = new Joystick(0);
-		operator = new Joystick(1);
 	}
 
 	public void teleopPeriodic() {
 
 		ControllerDrive();
+
+		if (driver.getRawButtonPressed(3)) {
+			autofill = !autofill;
+		}
+
+		if (driver.getRawButton(5)) {
+			launcher.set(Value.kForward);
+		} else {
+			launcher.set(Value.kReverse);
+		}
+
+		if (PistonPressure() < pistonPressureTarget) {
+			pistonCharged = false;
+		}
+		if (PistonPressure() > pistonPressureTarget + 5) {
+			pistonCharged = true;
+		}
+
+		if (LauncherPressure() < launcherPressureTarget) {
+			launcherCharged = false;
+		}
+		if (LauncherPressure() > launcherPressureTarget + 5) {
+			launcherCharged = true;
+		}
+
+		if (autofill) {
+
+			System.out.println("Tank Pressure " + LauncherPressure());
+			System.out.println("Piston Pressure " + PistonPressure());
+
+			if (driver.getRawButton(2)) {
+				launcherCompressor.set(1.0f);
+				launcherCompressorTwo.set(1.0f);
+			} else {
+				if (launcherCharged) {
+					launcherCompressor.set(0.0f);
+					launcherCompressorTwo.set(0.0f);
+				} else {
+					launcherCompressor.set(1.0f);
+					launcherCompressorTwo.set(1.0f);
+				}
+			}
+
+			if (pistonCharged) {
+				pistonCompressor.set(0.0f);
+			} else {
+				pistonCompressor.set(1.0f);
+			}
+
+			if (driver.getRawButton(1)) {
+				tank.set(tankMoveSpeed);
+			} else if (driver.getRawButton(4)) {
+				tank.set(-tankMoveSpeed);
+			} else {
+				tank.set(tankHoldSpeed);
+			}
+		} else {
+			pistonCompressor.set(0.0);
+			launcherCompressor.set(0.0);
+			launcherCompressorTwo.set(0.0);
+			System.out.println("Autofill off.");
+		}
 
 		driveTrain.Update();
 	}
@@ -78,6 +163,12 @@ public class Robot extends TimedRobot {
 	}
 
 	public void testPeriodic() {
+	}
+
+	public void CompressorsOn() {
+	}
+
+	public void CompressorOff() {
 	}
 
 	public float TranslateController(float input) {
@@ -107,4 +198,12 @@ public class Robot extends TimedRobot {
 		}
 	}
 
+	public double LauncherPressure() {
+		return (250.0 * (launcherPressure.getAverageVoltage() / 5.0) - 25.0);
+	}
+
+	public double PistonPressure() {
+		return (250.0 * (pistonPressure.getAverageVoltage() / 5.0) - 25.0);
+
+	}
 }
