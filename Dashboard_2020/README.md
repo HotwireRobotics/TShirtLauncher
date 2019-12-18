@@ -8,6 +8,11 @@ Build for production
 
 
 
+1st time install
+ - `npm install`
+
+
+
 Charting Demos and docs
 https://js.devexpress.com/Demos/WidgetsGallery/Demo/Gauges/Overview/Vue/Light/
 

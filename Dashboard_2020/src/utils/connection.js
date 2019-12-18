@@ -4,36 +4,7 @@ let buttonConnect = document.getElementById('connect-button');
 
 let loginShown = true;
 
-// Hot Graph
-class HotGraph {
 
-  constructor(divName, pointsCount) {
-
-    this.pointsCount = pointsCount;
-    this.data = [];
-    this.data.push([new Date(), 0]);
-
-    this.graph = new Dygraph(
-
-      // containing div
-      document.getElementById(divName),
-      this.data,
-      { labels: ['Time', 'Value'], width: 900, height: 450 }
-    );
-  }
-
-  PutValue(newValue) {
-    var x = new Date();  // current time
-    var y = newValue;
-    this.data.push([x, y]);
-    if (this.data.length > this.pointsCount) {
-      this.data.splice(0, 1);
-    }
-
-    this.graph.updateOptions({ 'file': this.data });
-  }
-}
-// ----------
 
 let ultrasonicDown;
 let gearRackFrontOne;

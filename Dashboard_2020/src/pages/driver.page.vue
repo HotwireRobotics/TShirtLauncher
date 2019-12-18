@@ -1,19 +1,17 @@
 <template>
       <v-container class="fill-height" fluid>
-        <PowerChart />
         <PressureButtons />
       </v-container>
 </template>
 
 <script>
-import PowerChart from './PowerChart';
-import PressureButtons from './PressureButtons';
+import PressureButtons from '../components/PressureButtons';
 
 export default {
-  name: 'MainContainer',
+  name: 'DriverPage',
 
   components: {
-    PowerChart, PressureButtons
+    PressureButtons
   },
 
   data: () => ({ data: null}),
