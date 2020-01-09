@@ -185,6 +185,10 @@ export const NetworkTables =
             create_map() {
                 return new d3_map();
             },
+
+            connect(address) {
+                ipc.send('connect', address);
+            },
             /**
              * Escapes NetworkTables keys so that they’re valid HTML identifiers.
              * @param key A networktables key

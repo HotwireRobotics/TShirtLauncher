@@ -1,0 +1,12 @@
+ - Robot connection testing
+ - ~~Have two pages (drive/other)~~  Done
+ - ~~psi guage~~ Done
+    - Ready or not label
+ - Range toggle
+    - Input and buttons
+ - Camera
+ - PID
+    - Charting
+    - Inputs
+ - Volt graphs
+    - toggle bitsas
