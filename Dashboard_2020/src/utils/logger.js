@@ -28,6 +28,18 @@ export async function logEvent(event) {
         });
 }
 
+export async function logData(data, type) {
+    let msg = `${new Date().toLocaleTimeString()} :: ${event}`;
+    // eslint-disable-next-line no-console
+    // console.log('INFO ', msg);
+    msg += '\n';
+    return fs.appendFile(eventLogPath, msg)
+        .catch(err => {
+            // eslint-disable-next-line no-console
+            console.log(err);
+        });
+}
+
 // module.exports = {
 //     logError,
 //     logEvent

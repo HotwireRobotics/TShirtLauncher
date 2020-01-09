@@ -1,6 +1,6 @@
  - Robot connection testing
- - Have two pages (drive/other)
- - psi guage
+ - ~~Have two pages (drive/other)~~  Done
+ - ~~psi guage~~ Done
     - Ready or not label
  - Range toggle
     - Input and buttons
