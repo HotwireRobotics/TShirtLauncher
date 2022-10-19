@@ -6,36 +6,36 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Talon;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 
 import java.nio.Buffer;
 import java.rmi.server.Operation;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+//import com.ctre.phoenix.motorcontrol.ControlMode;
+//import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
-import edu.wpi.first.wpilibj.interfaces.Potentiometer;
+//import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import com.kauailabs.navx.frc.AHRS;
+//import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.RobotState;
-import edu.wpi.first.hal.PDPJNI;
+//import edu.wpi.first.hal.PDPJNI;
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 
 public class Robot extends TimedRobot {
 
@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
 	public double tankHoldSpeed = 0.0;
 
 	// Solenoids
-	public DoubleSolenoid launcher = new DoubleSolenoid(2, 3);
+	public DoubleSolenoid launcher = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
 	// Joysticks
 	public Joystick driver = new Joystick(0);
@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
 	public AnalogInput pistonPressure = new AnalogInput(1);
 
 	public double pistonPressureTarget = 50;
-	public double launcherPressureTarget = 75;
+	public double launcherPressureTarget = 70;
 
 	private boolean pistonCharged = false;
 	private boolean launcherCharged = false;
@@ -118,10 +118,18 @@ public class Robot extends TimedRobot {
 			launcherCharged = true;
 		}
 
-		if (autofill) {
+		System.out.println("Tank Pressure " + LauncherPressure());
+		//System.out.println("Piston Pressure " + PistonPressure());
 
-			System.out.println("Tank Pressure " + LauncherPressure());
-			System.out.println("Piston Pressure " + PistonPressure());
+		if (driver.getRawButton(1)) {
+			tank.set(tankMoveSpeed);
+		} else if (driver.getRawButton(4)) {
+			tank.set(-tankMoveSpeed);
+		} else {
+			tank.set(tankHoldSpeed);
+		}
+
+		if (autofill) {
 
 			if (driver.getRawButton(2)) {
 				launcherCompressor.set(1.0f);
@@ -142,13 +150,6 @@ public class Robot extends TimedRobot {
 				pistonCompressor.set(1.0f);
 			}
 
-			if (driver.getRawButton(1)) {
-				tank.set(tankMoveSpeed);
-			} else if (driver.getRawButton(4)) {
-				tank.set(-tankMoveSpeed);
-			} else {
-				tank.set(tankHoldSpeed);
-			}
 		} else {
 			pistonCompressor.set(0.0);
 			launcherCompressor.set(0.0);
@@ -182,8 +183,8 @@ public class Robot extends TimedRobot {
 	}
 
 	public void ControllerDrive() {
-		float horJoystick = TranslateController((float) driver.getRawAxis(0));
-		float verJoystick = TranslateController((float) driver.getRawAxis(5));
+		float horJoystick = TranslateController((float) driver.getRawAxis(4));
+		float verJoystick = TranslateController((float) driver.getRawAxis(1));
 
 		driveTrain.SetRightSpeed(-verJoystick + -horJoystick);
 		driveTrain.SetLeftSpeed(-verJoystick + horJoystick);
