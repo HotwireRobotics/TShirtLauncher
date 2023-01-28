@@ -61,6 +61,9 @@ public class Robot extends TimedRobot {
 
 	// Joysticks
 	public Joystick driver = new Joystick(0);
+	public Joystick flightStickLeft = new Joystick(2);
+	public Joystick flightStickRight = new Joystick(3);
+
 
 	// Pressure Sensor
 	public AnalogInput launcherPressure = new AnalogInput(2);
@@ -88,6 +91,9 @@ public class Robot extends TimedRobot {
 
 	public void teleopInit() {
 		driver = new Joystick(0);
+		flightStickLeft = new Joystick(2);
+		flightStickRight = new Joystick(3);
+
 	}
 
 	public void teleopPeriodic() {
@@ -183,10 +189,11 @@ public class Robot extends TimedRobot {
 	}
 
 	public void ControllerDrive() {
-		float horJoystick = TranslateController((float) driver.getRawAxis(4));
-		float verJoystick = TranslateController((float) driver.getRawAxis(1));
+		float horJoystick = TranslateController((float) flightStickRight.getRawAxis(0));
+		float verJoystick = TranslateController((float) flightStickLeft.getRawAxis(1));
 
 		driveTrain.SetRightSpeed(-verJoystick + -horJoystick);
+		System.out.println(-verJoystick + -horJoystick);
 		driveTrain.SetLeftSpeed(-verJoystick + horJoystick);
 		driveTrain.SetCoast();
 	}
