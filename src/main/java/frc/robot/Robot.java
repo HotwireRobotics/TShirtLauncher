@@ -56,6 +56,11 @@ public class Robot extends TimedRobot {
 	public double tankMoveSpeed = 0.2;
 	public double tankHoldSpeed = 0.0;
 
+	//Motors
+    //public CANSparkMax arm1 = new CANSparkMax(21, MotorType.kBrushless);
+    //public CANSparkMax arm2 = new CANSparkMax(22, MotorType.kBrushless);
+
+
 	// Solenoids
 	public DoubleSolenoid launcher = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
@@ -97,6 +102,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopPeriodic() {
+		//arm1.set(0.5);
 
 		ControllerDrive();
 
@@ -123,6 +129,8 @@ public class Robot extends TimedRobot {
 		if (LauncherPressure() > launcherPressureTarget + 5) {
 			launcherCharged = true;
 		}
+			
+
 
 		System.out.println("Tank Pressure " + LauncherPressure());
 		//System.out.println("Piston Pressure " + PistonPressure());
